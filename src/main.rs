@@ -3,6 +3,7 @@ use tokio::signal;
 use tracing::info;
 
 mod app;
+mod db;
 mod routes;
 mod telemetry;
 
@@ -10,7 +11,11 @@ mod telemetry;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     telemetry::init_telemetry();
 
-    let app = app::create_app();
+    let database_url = std::env::var("DATABASE_URL")
+    .unwrap_or_else(|_| "postgres://vaultkeep:vaultkeep_secret_pass@localhost:5432/vaultkeep".to_string());
+
+    let db_pool = db::init_db_pool(&database_url).await?;
+    let app = app::create_app(db_pool);
     let addr = SocketAddr::from(([0, 0, 0, 0], 7777));
     let listener = tokio::net::TcpListener::bind(addr).await?;
     info!("vaultkeep listening on http://{}", addr);

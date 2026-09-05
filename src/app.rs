@@ -7,6 +7,7 @@ use http::{
     header::{HeaderName, HeaderValue},
     HeaderMap, Request, Response,
 };
+use sqlx::PgPool;
 use std::time::Duration;
 use tower::ServiceBuilder;
 use tower_http::{
@@ -21,7 +22,7 @@ use tower_http::{
 
 
 
-pub fn create_app() -> Router {
+pub fn create_app(db_pool: PgPool) -> Router {
     let x_request_id = HeaderName::from_static("x_request_id");
     let security_headers = ServiceBuilder::new()
         .layer(SetResponseHeaderLayer::overriding(
@@ -55,6 +56,7 @@ pub fn create_app() -> Router {
 
     Router::new()
         .route("/health", get(health_check))
+        .with_state(db_pool)
         .layer(RequestBodyLimitLayer::new( 2 * 1024 * 1024))
         .layer(middleware_stack) 
 }
