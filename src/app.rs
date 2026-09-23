@@ -3,10 +3,7 @@ use axum::{
     routing::get,
     Router,
 };
-use http::{
-    header::{HeaderName, HeaderValue},
-    HeaderMap, Request, Response,
-};
+use http::header::{HeaderName, HeaderValue};
 use sqlx::PgPool;
 use std::time::Duration;
 use tower::ServiceBuilder;

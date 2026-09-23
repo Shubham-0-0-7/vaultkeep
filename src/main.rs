@@ -4,8 +4,10 @@ use tracing::info;
 
 mod app;
 mod db;
+mod auth;
 mod routes;
 mod telemetry;
+
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
